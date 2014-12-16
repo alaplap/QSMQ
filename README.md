@@ -9,15 +9,12 @@ How can I get it? - There is a download link at the bottom of this page. Don't w
 ##Installing
 ###Requirements:
     * jQuery
-    * auth.php
-    * userinfo.php
     * quicksmq.js
     * quicksmq.css
 
-Put the `auth.php`, `userinfo.php` and `quicksmq.js` files in the same folder. Link from your html file to the `quicksmq.js` and `quicksmq.css` files like this:
+Link from your webpage to the `quicksmq.js` and `quicksmq.css` files like this:
 
 `<link type="text/css" rel="stylesheet" href="quicksmq.css">`
-
 `<script src="quicksmq.js"></script>`
 
 Install jQuery by linking from your html file to a CDN (Content Delivery Network), for example Google's like this:
@@ -33,10 +30,9 @@ First you need an Instagram profile. If you don't have one, install the Instagra
 
 To be able to make queries you have to register a client [here](http://instagram.com/developer/clients/manage/#) by clicking on the "Register a New Client" button. Give your application a name, a description and your website URL. Set the OAuth redirect_uri to the same as your website.
 
-Once you have done with it your application will get a CLIEND ID. Open quicksmq.js, find the following lines:
+Once you have done with it your application will get a CLIEND ID. Open `quicksmq.js`, find the following lines:
 
 `/* YOUR CLIEND ID GOES HERE:*/`
-
 `qsmq_setID("....");`
 
 Replace the dots with your application's CLIENT ID.
@@ -44,8 +40,10 @@ Replace the dots with your application's CLIENT ID.
 
 ###Usage
 
-Create a span including the user's username and set the class attribute to qsmq-ins-user like this:
+Create a span in your webpage including the user's username and set the class attribute to `qsmq-ins-user` like this:
 
 `<span class="qsmq-ins-user">instagram-username</span>`
 
-Replace 'instagram-username' with the Instagram username you want (without @ sign).
+Replace "instagram-username" with the Instagram username you want (without @ sign).
+
+Enjoy!

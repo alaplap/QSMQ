@@ -19,16 +19,56 @@
 
 var clientID, activeUserTag;
 
+function qsmq_setID(ID) {
+   clientID = ID;
+}
 /* YOUR CLIEND ID GOES HERE:*/
-qsmq_setID("...");
+qsmq_setID("59641894f6a24921b037654a1f412253");
 
 
+function searchUser(userName) {
+   return $.ajax({
+     	url: "https://api.instagram.com/v1/users/search?q=" + userName + "&client_id=" + clientID + "&callback=?",
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      type: "GET"
+   });
+}
 
-$( document ).ready(function() {
+function getUserMedia(userID) {
+   return $.ajax({
+      url: "https://api.instagram.com/v1/users/" + userID + "/media/recent/?client_id=" + clientID + "&callback=?",
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      type: "GET"
+   });
+}
+
+function getUserInfo(userID) {
+   return $.ajax({
+      url: "https://api.instagram.com/v1/users/" + userID + "/?client_id=" + clientID + "&callback=?",
+      dataType: "json",
+      contentType: "application/json; charset=utf-8",
+      type: "GET"
+   });
+}
+
+
+function shortNumber(n) {
+   if (n > 999999)
+      return Math.floor(n/1000000) + "M +";
+   else if (n > 99999)
+      return Math.floor(n/1000) + "K +";
+   else
+      return n + "";
+}
+
+$(document).ready(function() {
    $('.qsmq-ins-user').each(function() {
       $(this).mouseover(popUpProfile);
    });
 });
+
 
 function popUpProfile() {
 
@@ -105,14 +145,10 @@ function popUpProfile() {
       $(this).remove();
    });
 
-   $.ajax({
-      url: "auth.php?username=" + userName + "&clientid=" + clientID + "&count=1", 
-      dataType: "json",
-      contentType: "application/json; charset=utf-8",
-      type: "GET",
-      success: function (result) {
-         result = jQuery.parseJSON(result);
-         
+   searchUser(userName).done(function(result) {
+      userID = result.data[0].id;
+      
+      getUserMedia(userID).done(function(result) {         
          // popup hatter
          // utolso kep: result.data[0].images.low_resolution.url
          $(popup).css('background-image', 'url('+result.data[0].images.low_resolution.url+')');
@@ -120,77 +156,57 @@ function popUpProfile() {
          // profilkep: result.data[0].user.profile_picture
          profPic.src = result.data[0].user.profile_picture;
          
-         // felhasznali ID-je
-         userID = result.data[0].user.id;
-         
-         // felhasznaloi info lekerese
-         $.ajax({
-            url: "userinfo.php?userid=" + userID + "&clientid=" + clientID, 
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            type: "GET",
-            success: function (userInfoJSON) {
-               userInfoJSON = jQuery.parseJSON(userInfoJSON);
+         getUserInfo(userID).done(function(result) {
+            // profil nev: result.data.full_name
+            $(profName).append(result.data.full_name);
+            $(profName).attr('href', 'http://instagram.com/' + userName )
+               .attr('target', '_blank');
+               
+            // weboldal link: result.data.website
+            var webLinkUrl = result.data.website;
             
-               // profil nev: userInfoJSON.data.full_name
-               $(profName).append(userInfoJSON.data.full_name);
-               $(profName).attr('href', 'http://instagram.com/' + userName )
+            if (webLinkUrl.length !== 0) {
+               $(webLink).attr('href', webLinkUrl)
                   .attr('target', '_blank');
-                  
-               // weboldal link: userInfoJSON.data.website
-               var webLinkUrl = userInfoJSON.data.website;
                
-               if (webLinkUrl.length !== 0) {
-                  $(webLink).attr('href', webLinkUrl)
-                     .attr('target', '_blank');
-                  
-                  var shortLink = userInfoJSON.data.website;
-                  shortLink = shortLink.replace('http://','').replace('https://','');
-                  $(webLink).append(shortLink);
-               } else {
-                  $(body).css('display', 'none');
-               }
-                     
-               // profil bio: userInfoJSON.data.bio
-               var biography = userInfoJSON.data.bio;
-               if (biography.length > 150)
-                  biography = biography.substring(0,150) + "...";
-                  
-               $(profBio).append(biography);
-               
-               var posts = shortNumber(userInfoJSON.data.counts.media);
-               var flwrs = shortNumber(userInfoJSON.data.counts.follows);
-               var flwis = shortNumber(userInfoJSON.data.counts.followed_by);               
-               
-               $(profPost).append(posts);
-               $(profFlwr).append(flwrs);
-               $(profFlwi).append(flwis);
-               
-               $(popup).removeClass().addClass('qsmq popup loaded ' + userName);
-               
-               /* popup event */
-               $(popup).on("mouseleave", function () {
-                  $(this).remove();
-               });
+               var shortLink = result.data.website;
+               shortLink = shortLink.replace('http://','').replace('https://','');
+               $(webLink).append(shortLink);
+            } else {
+               $(body).css('display', 'none');
             }
+                  
+            // profil bio: result.data.bio
+            var biography = result.data.bio;
+            if (biography.length > 150)
+               biography = biography.substring(0,150) + "...";
+               
+            $(profBio).append(biography);
+            
+            var posts = shortNumber(result.data.counts.media);
+            var flwrs = shortNumber(result.data.counts.follows);
+            var flwis = shortNumber(result.data.counts.followed_by);               
+            
+            $(profPost).append(posts);
+            $(profFlwr).append(flwrs);
+            $(profFlwi).append(flwis);
+            
+            $(popup).removeClass().addClass('qsmq popup loaded ' + userName);
+            
+            /* popup event */
+            $(popup).on("mouseleave", function () {
+               $(this).remove();
+            });
+         }).fail(function() {
+            $(profLdr).css('background-color', 'red');
          });
          
-      },
-      error: function () {
+      }).fail(function() {
          $(profLdr).css('background-color', 'red');
-      }
+      });
+      
+   }).fail(function() {
+      $(profLdr).css('background-color', 'red');
    });
-}
 
-function qsmq_setID(ID) {
-   clientID = ID;
-}
-
-function shortNumber(n) {
-   if (n > 999999)
-      return Math.floor(n/1000000) + "M +";
-   else if (n > 99999)
-      return Math.floor(n/1000) + "K +";
-   else
-      return n + "";
 }
