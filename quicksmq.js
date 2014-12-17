@@ -23,7 +23,7 @@ function qsmq_setID(ID) {
    clientID = ID;
 }
 /* YOUR CLIEND ID GOES HERE:*/
-qsmq_setID("59641894f6a24921b037654a1f412253");
+qsmq_setID("");
 
 
 function searchUser(userName) {
