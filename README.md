@@ -15,6 +15,7 @@ How can I get it? - There is a download link at the bottom of this page. Don't w
 Link from your webpage to the `quicksmq.js` and `quicksmq.css` files like this:
 
 `<link type="text/css" rel="stylesheet" href="quicksmq.css">`
+
 `<script src="quicksmq.js"></script>`
 
 Install jQuery by linking from your html file to a CDN (Content Delivery Network), for example Google's like this:
@@ -33,6 +34,7 @@ To be able to make queries you have to register a client [here](http://instagram
 Once you have done with it your application will get a CLIEND ID. Open `quicksmq.js`, find the following lines:
 
 `/* YOUR CLIEND ID GOES HERE:*/`
+
 `qsmq_setID("....");`
 
 Replace the dots with your application's CLIENT ID.

@@ -30,7 +30,7 @@ function qsmq_setID(ID) {
 }
 
 /* YOUR CLIEND ID GOES HERE: */
-qsmq_setID("");
+/* qsmq_setID(""); */
 
 /*
  * Searching all user tags on the page and setting their mouseover event
